@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.views import generic
 from .models import Lead, Agent
 from agents.mixins import OrganizerAndLoginRequiredMixin
-from .forms import LeadForm, LeadModelForm, CustomUserCreationForm
+from .forms import LeadForm, LeadModelForm, CustomUserCreationForm, AssignAgentForm
 
 
 # CRUD+L - Create, Retrive, Update and Delete + List
@@ -35,12 +35,22 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         user = self.request.user
         # initial queryset of leads for the entire organization
         if user.is_organizer:
-            queryset = Lead.objects.filter(organization=user.userprofile)
+            queryset = Lead.objects.filter(organization=user.userprofile, agent__isnull=False)
         else:
-            queryset = Lead.objects.filter(organization=user.agent.organization)
+            queryset = Lead.objects.filter(organization=user.agent.organization, agent__isnull=False)
             # filter for the agent tha is logged in
             queryset = queryset.filter(agent__user=user)
         return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super(LeadListView, self).get_context_data(**kwargs)
+        user = self.request.user
+        if user.is_organizer:
+            queryset = Lead.objects.filter(organization=user.userprofile, agent__isnull=True)
+            context.update({
+                "unassigned_leads": queryset
+            })
+        return context
 
 
 def lead_list(request):
@@ -148,6 +158,14 @@ def lead_delete(request, pk):
     lead = Lead.objects.get(id=pk)
     lead.delete()
     return redirect("/leads")
+
+
+class AssignAgentView(OrganizerAndLoginRequiredMixin, generic.FormView):
+    template_name = "leads/assign_agent.html"
+    form_class = AssignAgentForm
+    
+    def get_success_url(self):
+        return reverse("leads:lead-list")
 
 
 # def lead_update(request, pk):
