@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.views import generic
 from .models import Lead, Agent, Category
 from agents.mixins import OrganizerAndLoginRequiredMixin
-from .forms import LeadForm, LeadModelForm, CustomUserCreationForm, AssignAgentForm
+from .forms import LeadForm, LeadModelForm, CustomUserCreationForm, AssignAgentForm, LeadCategoryUpdateForm
 
 
 # CRUD+L - Create, Retrive, Update and Delete + List
@@ -235,6 +235,25 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
                 organization=user.agent.organization
             )
         return queryset
+
+
+class LeadCategoryUpdateView(LoginRequiredMixin, generic.UpdateView):
+    template_name = "leads/lead_category_update.html"
+    form_class = LeadCategoryUpdateForm
+    
+    def get_queryset(self):
+        user = self.request.user
+        # initial queryset of leads for the entire organization
+        if user.is_organizer:
+            queryset = Lead.objects.filter(organization=user.userprofile)
+        else:
+            queryset = Lead.objects.filter(organization=user.agent.organization)
+            # filter for the agent tha is logged in
+            queryset = queryset.filter(agent__user=user)
+        return queryset
+    
+    def get_success_url(self):
+        return reverse("leads:lead-detail", kwargs={"pk":self.get_object().id})
 
 
 
