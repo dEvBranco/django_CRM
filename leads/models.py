@@ -24,7 +24,7 @@ class Lead(models.Model):
     category = models.ForeignKey("Category", related_name="leads", null=True, blank=True, on_delete=models.SET_NULL)
     description = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=25)
     email = models.EmailField()
     
     def __str__(self):
