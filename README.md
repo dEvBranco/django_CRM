@@ -2,8 +2,6 @@
 
 ## CRM project in Python Django
 
-- Introduction to Django
-- Starting a Project
 - Server and Migrations
 - Project Structure
 - Leads App
