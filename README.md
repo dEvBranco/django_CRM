@@ -1,6 +1,6 @@
 # Django CRM
 
-CRM training project in Python Django
+## CRM project in Python Django
 
 - Introduction to Django
 - Starting a Project
