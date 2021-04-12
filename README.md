@@ -2,6 +2,10 @@
 
 ## CRM project in Python Django
 
+![crm_1](https://user-images.githubusercontent.com/75887699/114382242-11b51300-9b84-11eb-915b-d12568c7ff01.png)
+
+![crm_2](https://user-images.githubusercontent.com/75887699/114382276-1b3e7b00-9b84-11eb-9b7c-54cbccb86ff3.png)
+
 - Server and Migrations
 - Project Structure
 - Leads App
